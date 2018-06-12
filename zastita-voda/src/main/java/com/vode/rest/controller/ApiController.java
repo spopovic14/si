@@ -12,11 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.vode.entity.Inspekcija;
 import com.vode.entity.Licensa;
+import com.vode.entity.MerenjeKvaliteta;
 import com.vode.entity.PozivInspekcije;
 import com.vode.entity.VodniResurs;
 import com.vode.model.ResponseObject;
 import com.vode.service.InspekcijaService;
 import com.vode.service.LicensaService;
+import com.vode.service.MerenjeKvalitetaService;
 import com.vode.service.PozivInspekcijeService;
 import com.vode.service.VodniResursService;
 
@@ -35,6 +37,9 @@ public class ApiController {
 	
 	@Autowired
 	private VodniResursService vodniResursService;
+	
+	@Autowired
+	private MerenjeKvalitetaService merenjeKvalitetaService;
 	
 	/**
 	 * Pravi novi poziv inspekcije za zadati vodni resurs
@@ -141,5 +146,23 @@ public class ApiController {
 		return new ResponseEntity<ResponseObject>(obj, status);
 	}
 	
-	// @ TODO Merenja
+	/**
+	 * Prikazuje najvonijih 10 merenja kvaliteta
+	 * @return
+	 */
+	@RequestMapping("/merenja-kvaliteta")
+	public ResponseEntity<ResponseObject> najnovijaMerenja() {
+		ArrayList<MerenjeKvaliteta> merenja = merenjeKvalitetaService.najnovijihN(10);
+		HttpStatus status = HttpStatus.OK;
+		String message = "OK";
+		
+		if(merenja.isEmpty()) {
+			message = "Nema podataka o merenjima kvaliteta";
+		}
+		
+		ResponseObject obj = new ResponseObject(message, 200);
+		obj.setResponse(merenja);
+		
+		return new ResponseEntity<ResponseObject>(obj, status);
+	}
 }
